@@ -1,0 +1,34 @@
+package weather;
+
+import java.io.IOException;
+
+import org.apache.hadoop.io.FloatWritable;
+//import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Mapper;
+
+public class WeatherMapper extends Mapper <LongWritable, Text, Text, FloatWritable> {
+
+	public void map(LongWritable key, Text value, Context con) throws IOException, InterruptedException {
+
+		float temperature=0;
+				int d=0;
+		 d=Integer.parseInt( value.toString().substring(92));
+		 d=d/10;
+		String year=value.toString().substring(15,19);
+		if(value.charAt(87)=='+') {
+		 temperature=Integer.parseInt(value.toString().substring(88,91));
+		
+		 temperature=d+temperature;
+		}
+		else {
+			 temperature=Integer.parseInt(value.toString().substring(87,91));
+				
+			 temperature=d-temperature;
+		}
+		if((temperature)!=999) {
+			con.write(new Text(year), new FloatWritable(temperature));
+		}
+	}
+}

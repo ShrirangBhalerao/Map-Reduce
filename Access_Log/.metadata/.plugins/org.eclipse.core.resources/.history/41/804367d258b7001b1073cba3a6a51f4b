@@ -1,0 +1,68 @@
+
+package Access;
+
+import java.io.IOException;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FSDataInputStream;
+//import org.apache.hadoop.fs.FileStatus;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+
+public class ALDriver {
+
+	@SuppressWarnings("deprecation")
+	public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
+
+		//create configuration and job objects
+		Configuration conf=new Configuration();
+		Job j=new Job(conf);
+		
+		j.setJarByClass(ALDriver.class);
+		j.setMapperClass(ALMapper.class);
+		j.setReducerClass(ALReducer.class);
+		j.setOutputKeyClass(Text.class);
+		    j.setOutputValueClass(IntWritable.class);
+		//set output data types
+		j.setOutputKeyClass(Text.class);
+		j.setOutputValueClass(IntWritable.class);
+		
+		//set input and output paths
+		FileInputFormat.addInputPath(j, new Path(args[0]));
+		FileOutputFormat.setOutputPath(j, new Path(args[1]));
+		
+		//wait for job completion
+		 j.waitForCompletion(true);
+		 @SuppressWarnings("unused")
+		
+		
+		FileSystem fs = FileSystem.get(conf);
+		Path s=new Path(args[1]);
+		System.out.println(s);
+		FSDataInputStream fd=fs.open(s);
+		int max=0;
+		String ip="";
+		String str=fd.readLine();
+		do {
+			String parts[]=str.split("	");
+			//find most occurred IP
+			if(max<Integer.parseInt(parts[1])) {
+				
+				max=Integer.parseInt(parts[1]);
+				ip=parts[0];
+			}		
+    		str=fd.readLine();
+		
+			 
+		 }while(str != null);
+		
+		System.out.println("IP address: " + ip);
+		System.out.println("No. of occurrences: " + max);
+		
+	}
+}
+		

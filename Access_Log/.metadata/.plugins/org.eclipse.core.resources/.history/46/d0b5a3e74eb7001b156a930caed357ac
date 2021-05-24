@@ -1,0 +1,37 @@
+
+package Access;
+
+package Access;
+
+import java.io.IOException;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Mapper;
+
+public class ALMapper extends Mapper <LongWritable,Text,Text,IntWritable> {
+	
+	public void map(LongWritable key, Text value, Context con) throws IOException, InterruptedException {
+		
+		//text to string
+		String logs=value.toString();
+		//split fields in a record
+		String logrecord[]=logs.split(" ");
+		//write ip address to context object
+		con.write(new Text(logrecord[0]),new IntWritable(1));
+	}
+}
+
+	@Override
+	public void close() throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void map(LongWritable arg0, Text arg1, OutputCollector<Text, IntWritable> arg2, Reporter arg3)
+			throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+}
